@@ -1,0 +1,34 @@
+version: "3"
+volumes:
+  estuary:
+  shuttle1:
+services:
+  estuary:
+    image: jtsmedley/estuary:estuary
+    volumes:
+      - estuary:/usr/src/estuary/data
+    environment:
+      - ESTUARY_DATABASE=sqlite=/usr/src/estuary/data/estuary.db
+      - ESTUARY_DATADIR=/usr/src/estuary/data/
+      - ESTUARY_API_LISTEN=0.0.0.0:3004
+      - FULLNODE_API_INFO=wss://api.chain.love
+      - ESTUARY_HOSTNAME=http://api.myfiles.host:3004
+    ports:
+      - "3004:3004"
+  shuttle:
+    image: jtsmedley/estuary:shuttle
+    volumes:
+      - shuttle1:/usr/src/estuary/data
+    environment:
+      - ESTUARY_DATABASE=sqlite=/usr/src/estuary/data/estuary-shuttle.db
+      - ESTUARY_DATADIR=/usr/src/estuary/data/
+      - FULLNODE_API_INFO=wss://api.chain.love
+      - ESTUARY_HOSTNAME=api.myfiles.host:3004
+      - ESTUARY_SHUTTLE_TOKEN
+      - ESTUARY_SHUTTLE_HANDLE
+    ports:
+      - "3005:3005"
+  www:
+    image: jtsmedley/estuary:www
+    ports:
+      - "8085:3004"
