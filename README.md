@@ -1,4 +1,4 @@
-Recommended to bind ports 3004/udp and 3004/tcp to the host for estuary, 3005/udp and 3005 tcp for shuttle and 80/tcp for estuary-www.
+ENV Variables that need set
 
-Store database and datadir in persistent docker volume as a mnt path.
-
+ESTUARY_SHUTTLE_TOKEN: Token Created in WebUI
+ESTUARY_SHUTTLE_HANDLE: Handle Created in WebUI

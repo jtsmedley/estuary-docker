@@ -4,7 +4,7 @@ volumes:
   shuttle1:
 services:
   estuary:
-    image: jtsmedley/estuary:estuary
+    image: jtsmedley/estuary:latest
     volumes:
       - estuary:/usr/src/estuary/data
     environment:
@@ -16,7 +16,7 @@ services:
     ports:
       - "3004:3004"
   shuttle:
-    image: jtsmedley/estuary:shuttle
+    image: jtsmedley/estuary-shuttle:latest
     volumes:
       - shuttle1:/usr/src/estuary/data
     environment:
@@ -29,6 +29,6 @@ services:
     ports:
       - "3005:3005"
   www:
-    image: jtsmedley/estuary:www
+    image: jtsmedley/estuary-www:latest
     ports:
       - "8085:3004"
