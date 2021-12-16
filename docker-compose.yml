@@ -3,6 +3,22 @@ volumes:
   estuary:
   shuttle1:
 services:
+  nginx:
+    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+    image: nginx:1.21-alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./data/nginx:/etc/nginx/conf.d
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
+  certbot:
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+    image: certbot/certbot
+    volumes:
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
   estuary:
     image: jtsmedley/estuary:latest
     volumes:
@@ -12,9 +28,10 @@ services:
       - ESTUARY_DATADIR=/usr/src/estuary/data/
       - ESTUARY_API_LISTEN=0.0.0.0:3004
       - FULLNODE_API_INFO=wss://api.chain.love
-      - ESTUARY_HOSTNAME=http://api.myfiles.host:3004
+      - ESTUARY_HOSTNAME=https://api.myfiles.host:3004
     ports:
       - "3004:3004"
+      - "3004:3004/udp"
   shuttle:
     image: jtsmedley/estuary-shuttle:latest
     volumes:
@@ -24,11 +41,17 @@ services:
       - ESTUARY_DATADIR=/usr/src/estuary/data/
       - FULLNODE_API_INFO=wss://api.chain.love
       - ESTUARY_HOSTNAME=api.myfiles.host:3004
-      - ESTUARY_SHUTTLE_TOKEN
-      - ESTUARY_SHUTTLE_HANDLE
+      - ESTUARY_SHUTTLE_TOKEN=SECRET-KEY-SECRET
+      - ESTUARY_SHUTTLE_HANDLE=SHUTTLE-KEY-HANDLE
     ports:
       - "3005:3005"
+      - "3005:3005/udp"
   www:
-    image: jtsmedley/estuary-www:latest
+    image: localEstuary/estuary-www:latest
     ports:
-      - "8085:3004"
+      - "3000:3000"
+    build:
+      context: ./www
+      args:
+        ESTUARY_HOSTNAME: api.myfiles.host
+        ESTUARY_TOKEN: 11223344

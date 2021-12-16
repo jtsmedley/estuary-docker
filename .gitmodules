@@ -1,0 +1,9 @@
+[submodule "main"]
+	path = main
+	url = https://github.com/jtsmedley/estuary-docker-main
+[submodule "www"]
+	path = www
+	url = https://github.com/jtsmedley/estuary-docker-www
+[submodule "shuttle"]
+	path = shuttle
+	url = https://github.com/jtsmedley/estuary-docker-shuttle
